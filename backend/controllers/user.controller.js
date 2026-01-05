@@ -9,12 +9,16 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (!username || !fullName || !email || !password) {
     throw new ApiError(400, "All fields are required");
   }
+  const existenceUser = await User.findOne({ $or: [{ username }, { email }] });
+  if (existenceUser) {
+    throw new ApiError(400, "User already exists with above username or email");
+  }
   if (password.length < 8 || password.length > 16) {
     throw new ApiError(400, "password length between 8 & 16");
   }
   const avatarLocalPath = req.file?.path;
   if (!avatarLocalPath) {
-    throw new ApiError(400, "Avatar filed is required");
+    throw new ApiError(400, "Avatar field is required");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalPath);
@@ -28,13 +32,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     email,
     password,
     avatar: avatar?.url,
-  }).select("-password -refreshToken");
+  });
 
-  if (!user) {
+  const registeredUser = await User.findById(user?._id).select(
+    "-password -refreshToken"
+  );
+  if (!registeredUser) {
     throw new ApiError(500, "Failed to create user");
   }
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, user, "Successfully registered user"));
+    .status(201)
+    .json(new ApiResponse(201, registeredUser, "Successfully registered user"));
 });
