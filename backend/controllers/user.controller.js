@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
+
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, fullName, email, password } = req.body;
   if (!username || !fullName || !email || !password) {
@@ -49,15 +50,16 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const verificationCode = await user.generateVerificationCode();
   await user.save();
-  sendVerificationCode(verificationCode, email, res);
-  const registeredUser = await User.findById(user?._id).select(
-    "-password -refreshToken"
-  );
-  if (!registeredUser) {
-    throw new ApiError(500, "Failed to create user");
+
+  const emailResult = await sendVerificationCode(verificationCode, email); // Await and no res
+  if (!emailResult.success) {
+    throw new ApiError(500, emailResult.message); // Let asyncHandler send error response
   }
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, registeredUser, "Successfully registered user"));
+  // Now let asyncHandler send the success response naturally, or add:
+  return res.status(201).json({
+    success: true,
+    message: "User registered successfully. Check email for verification.",
+    data: { userId: user._id, username: user.username },
+  });
 });

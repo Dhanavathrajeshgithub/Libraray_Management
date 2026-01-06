@@ -1,22 +1,16 @@
 import { generateVerificationOtpEmailTemplate } from "./emailTemplate.js";
 import { sendEmail } from "./sendEmail.js";
 
-export async function sendVerificationCode(verificationCode, email, res) {
+export async function sendVerificationCode(verificationCode, email) {
   try {
     const message = generateVerificationOtpEmailTemplate(verificationCode);
-    sendEmail({
+    await sendEmail({
       email,
       subject: "Verification code (Bookworm Library Management System)",
       message,
     });
-    res.status(200).json({
-      success: true,
-      message: "Verification code sent successfully",
-    });
+    return { success: true, message: "Verification code sent successfully" }; // Just return
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "verification code failed to sent.",
-    });
+    return { success: false, message: "Verification code failed to send." };
   }
 }

@@ -20,6 +20,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// auth routes
+import userRouter from "./routes/user.routes.js";
+app.use("/api/v1/users", userRouter);
+
 connectDB();
 
 app.use(errorMiddleware);
