@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import crypto from "crypto";
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema(
     },
     refreshToken: {
       type: String,
+      select: false,
     },
     refreshTokenExpire: Date,
     verificationCode: Number,
@@ -72,5 +73,12 @@ userSchema.pre("save", async function (next) {
 });
 userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
+};
+userSchema.methods.generateVerificationCode = function () {
+  // generates random 5 digit number
+  const verificationCode = crypto.randomInt(100000, 1000000);
+  this.verificationCode = verificationCode;
+  this.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
+  return verificationCode;
 };
 export const User = mongoose.model("User", userSchema);
