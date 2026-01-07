@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
       required: [true, "Please enter username"],
       trim: true,
-      unique: true,
     },
     fullName: {
       type: String,
@@ -18,7 +18,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please enter email"],
       lowercase: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -54,11 +53,6 @@ const userSchema = new mongoose.Schema(
       type: String, // cloudinary url
       required: true,
     },
-    refreshToken: {
-      type: String,
-      select: false,
-    },
-    refreshTokenExpire: Date,
     verificationCode: Number,
     verificationCodeExpire: Date,
     resetPasswordToken: String,
@@ -76,9 +70,21 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 userSchema.methods.generateVerificationCode = function () {
   // generates random 5 digit number
-  const verificationCode = crypto.randomInt(100000, 1000000);
-  this.verificationCode = verificationCode;
-  this.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
+  const verificationCode = crypto.randomInt(10000, 100000);
   return verificationCode;
+};
+userSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+      fullName: this.fullName,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    }
+  );
 };
 export const User = mongoose.model("User", userSchema);

@@ -5,6 +5,12 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 
+const cookieOptions = {
+  httpOnly: true,
+  secure: true,
+  sameSite: "strict",
+};
+
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, fullName, email, password } = req.body;
   if (!username || !fullName || !email || !password) {
@@ -49,17 +55,71 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   const verificationCode = await user.generateVerificationCode();
-  await user.save();
+  user.verificationCode = verificationCode;
+  user.verificationCodeExpire = Date.now() + 15 * 60 * 1000;
+  await user.save({ validateModifiedOnly: true });
 
   const emailResult = await sendVerificationCode(verificationCode, email); // Await and no res
   if (!emailResult.success) {
     throw new ApiError(500, emailResult.message); // Let asyncHandler send error response
   }
 
-  // Now let asyncHandler send the success response naturally, or add:
-  return res.status(201).json({
-    success: true,
-    message: "User registered successfully. Check email for verification.",
-    data: { userId: user._id, username: user.username },
-  });
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        201,
+        { userId: user._id, username: user.username },
+        "User registered successfully. Check email for verification."
+      )
+    );
+});
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  if (!email || !otp) {
+    throw new ApiError(400, "Email and Otp both are required.");
+  }
+  const userAllEntries = await User.find({
+    email,
+    accountVerified: false,
+  }).sort({ createdAt: -1 });
+
+  if (userAllEntries.length == 0) {
+    throw new ApiError(
+      404,
+      "User doesn't exists with this email or already verified"
+    );
+  }
+
+  // check for otp match
+  const currUser = userAllEntries[0];
+  if (currUser.verificationCode !== Number(otp)) {
+    throw new ApiError(400, "Otp doesn't matched");
+  }
+
+  if (currUser.verificationCodeExpire < Date.now()) {
+    throw new ApiError(400, "Otp expired");
+  }
+  // otp matched,
+  currUser.accountVerified = true;
+  currUser.verificationCode = null;
+  currUser.verificationCodeExpire = null;
+  await currUser.save({ validateModifiedOnly: true });
+
+  // delete remaining users
+  await User.deleteMany({ email, accountVerified: false });
+
+  const accessToken = await currUser.generateAccessToken();
+  if (!accessToken) {
+    throw new ApiError(500, "Failed to generate access token");
+  }
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .json(new ApiResponse(200, currUser, "Account verified successfully"));
 });
