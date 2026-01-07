@@ -123,3 +123,48 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     })
     .json(new ApiResponse(200, currUser, "Account verified successfully"));
 });
+
+export const loginUser = asyncHandler(async (req, res) => {
+  const { email, username, password } = req.body;
+  if (!(email || username) || !password) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const user = await User.findOne({
+    $or: [{ email }, { username }],
+    accountVerified: true,
+  }).select("+password");
+
+  if (!user) {
+    throw new ApiError(400, "User doesn't exists with this username or email");
+  }
+
+  const isPasswordCorrect = await user.isPasswordCorrect(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Incorrect password");
+  }
+  const accessToken = await user.generateAccessToken();
+  if (!accessToken) {
+    throw new ApiError(500, "Failed to generate access token");
+  }
+  // password matched
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    })
+    .json(
+      new ApiResponse(
+        200,
+        {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          fullName: user.fullName,
+          avatar: user.avatar,
+          role: user.role,
+        },
+        "User logged in successfully"
+      )
+    );
+});
