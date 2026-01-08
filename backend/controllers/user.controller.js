@@ -179,3 +179,10 @@ export const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("accessToken", cookieOptions)
     .json(new ApiResponse(200, user, "User loggedout successfully"));
 });
+
+export const getUser = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    throw new ApiError(400, "User not loggedin");
+  }
+  return res.json(new ApiResponse(200, req.user, "User fetched successfully"));
+});
