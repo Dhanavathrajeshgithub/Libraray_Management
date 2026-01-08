@@ -119,7 +119,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 2 * 24 * 60 * 1000,
     })
     .json(new ApiResponse(200, currUser, "Account verified successfully"));
 });
@@ -151,7 +151,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, {
       ...cookieOptions,
-      maxAge: 15 * 60 * 1000,
+      maxAge: 2 * 24 * 60 * 1000,
     })
     .json(
       new ApiResponse(
@@ -167,4 +167,15 @@ export const loginUser = asyncHandler(async (req, res) => {
         "User logged in successfully"
       )
     );
+});
+
+export const logoutUser = asyncHandler(async (req, res) => {
+  const user = req.user;
+  if (!user) {
+    throw new ApiError(400, "user is not loggedin");
+  }
+  res
+    .status(200)
+    .clearCookie("accessToken", cookieOptions)
+    .json(new ApiResponse(200, user, "User loggedout successfully"));
 });
