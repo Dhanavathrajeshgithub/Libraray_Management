@@ -16,6 +16,6 @@ router.post("/register", upload.single("avatar"), registerUser);
 router.post("/verify-otp", verifyOtp);
 router.post("/login", loginLimiter, loginUser);
 router.post("/logout", verifyJWT, logoutUser);
-router.get("/get-user", verifyJWT, getUser);
-router.post("/forgot-password", forgotPassword);
+router.get("/profile", verifyJWT, getUser);
+router.post("/password/forgot", forgotPassword);
 export default router;
