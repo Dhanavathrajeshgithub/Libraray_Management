@@ -223,3 +223,37 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     throw new ApiError(500, `Failed to send email to the user ${user.email}`);
   }
 });
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+  if (!user) {
+    throw new ApiError(400, "invalid resetPasswordToken or has been expired");
+  }
+  if (req.body.password !== req.body.confirmPassword) {
+    throw new ApiError(400, "Password and confirm new password doesn't match");
+  }
+  if (req.body.password.length < 8 || req.body.password.length > 16) {
+    throw new ApiError(
+      400,
+      "Password length must be between 8 and 16 inclusively"
+    );
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save({ validateModifiedOnly: true });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, user, "User password changed successfully"));
+});
