@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { User } from "../models/user.model.js";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
+import { sendEmail } from "../utils/sendEmail.js";
+import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplate.js";
 
 const cookieOptions = {
   httpOnly: true,
@@ -185,4 +187,39 @@ export const getUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User not loggedin");
   }
   return res.json(new ApiResponse(200, req.user, "User fetched successfully"));
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const user = await User.findOne({
+    email: req.body?.email,
+    accountVerified: true,
+  });
+  if (!user) {
+    throw new ApiError(400, "Provide email or Invalid email");
+  }
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateModifiedOnly: true });
+  const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+  const message = generateForgotPasswordEmailTemplate(resetPasswordUrl);
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Bookworm Library Management System Password Recovery",
+      message,
+    });
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          {},
+          `Email sent to user ${user.email} successfully`
+        )
+      );
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateModifiedOnly: true });
+    throw new ApiError(500, `Failed to send email to the user ${user.email}`);
+  }
 });
