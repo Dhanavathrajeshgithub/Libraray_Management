@@ -6,6 +6,7 @@ import { User } from "../models/user.model.js";
 import { sendVerificationCode } from "../utils/sendVerificationCode.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { generateForgotPasswordEmailTemplate } from "../utils/emailTemplate.js";
+import crypto from "crypto";
 
 const cookieOptions = {
   httpOnly: true,
@@ -226,7 +227,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
 export const resetPassword = asyncHandler(async (req, res) => {
   const { token } = req.params;
-  const resetPasswordToken = crypto
+  const resetPasswordToken = await crypto
     .createHash("sha256")
     .update(token)
     .digest("hex");
@@ -238,7 +239,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(400, "invalid resetPasswordToken or has been expired");
   }
-  if (req.body.password !== req.body.confirmPassword) {
+  if (!req?.body?.password || !req?.body?.confirmPassword) {
+    throw new ApiError(400, "Password and confirm new password both required");
+  }
+  if (req?.body?.password !== req?.body?.confirmPassword) {
     throw new ApiError(400, "Password and confirm new password doesn't match");
   }
   if (req.body.password.length < 8 || req.body.password.length > 16) {
