@@ -211,17 +211,13 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     res
       .status(200)
       .json(
-        new ApiResponse(
-          200,
-          {},
-          `Email sent to user ${user.email} successfully`
-        )
+        new ApiResponse(200, {}, `Email sent to  ${user.email} successfully`)
       );
   } catch (error) {
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save({ validateModifiedOnly: true });
-    throw new ApiError(500, `Failed to send email to the user ${user.email}`);
+    throw new ApiError(500, `Failed to send email to  ${user.email}`);
   }
 });
 
@@ -259,30 +255,31 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, user, "User password changed successfully"));
+    .json(new ApiResponse(200, {}, "User password changed successfully"));
 });
 
 export const updatePassword = asyncHandler(async (req, res) => {
   const user = req.user;
-  const { password, newPassword } = req.body;
-  if (!password || !newPassword) {
-    throw new ApiError(400, "Password and newPassword are required");
+  const { oldPassword, newPassword } = req.body; // 'oldPassword' clearer than 'password'
+
+  if (!oldPassword || !newPassword) {
+    throw new ApiError(400, "oldPassword and newPassword required");
   }
-  if (!user.isPasswordCorrect(password)) {
-    throw new ApiError(400, "Incorrect old password");
+
+  if (!user.isPasswordCorrect(oldPassword)) {
+    throw new ApiError(401, "Incorrect current password"); // 401 better for auth failure
   }
+
   if (newPassword.length < 8 || newPassword.length > 16) {
-    throw new ApiError(400, "newPassword should be between 8 and 16");
+    throw new ApiError(400, "New password must be 8-16 characters");
   }
-  const updatedUser = await User.findByIdAndUpdate(
-    user._id,
-    { password: newPassword },
-    { new: true }
-  );
-  if (!updatedUser) {
-    throw new ApiError(500, "Error updating user password");
-  }
+
+  // Direct instance update → triggers bcrypt middleware
+  user.password = newPassword;
+  await user.save({ validateModifiedOnly: true });
+
+  // Don't return full user (exposes other fields)
   res
     .status(200)
-    .json(new ApiResponse(200, updatedUser, "Password updated successfully"));
+    .json(new ApiResponse(200, {}, "Password updated successfully"));
 });
