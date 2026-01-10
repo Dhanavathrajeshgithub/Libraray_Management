@@ -261,3 +261,28 @@ export const resetPassword = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, user, "User password changed successfully"));
 });
+
+export const updatePassword = asyncHandler(async (req, res) => {
+  const user = req.user;
+  const { password, newPassword } = req.body;
+  if (!password || !newPassword) {
+    throw new ApiError(400, "Password and newPassword are required");
+  }
+  if (!user.isPasswordCorrect(password)) {
+    throw new ApiError(400, "Incorrect old password");
+  }
+  if (newPassword.length < 8 || newPassword.length > 16) {
+    throw new ApiError(400, "newPassword should be between 8 and 16");
+  }
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    { password: newPassword },
+    { new: true }
+  );
+  if (!updatedUser) {
+    throw new ApiError(500, "Error updating user password");
+  }
+  res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Password updated successfully"));
+});
