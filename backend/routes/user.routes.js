@@ -6,6 +6,7 @@ import {
   logoutUser,
   registerUser,
   resetPassword,
+  updatePassword,
   verifyOtp,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -20,4 +21,5 @@ router.post("/logout", verifyJWT, logoutUser);
 router.get("/profile", verifyJWT, getUser);
 router.post("/password/forgot", forgotPassword);
 router.put("/password/reset/:token", resetPassword);
+router.put("/password/update", verifyJWT, updatePassword);
 export default router;

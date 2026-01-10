@@ -259,17 +259,22 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 export const updatePassword = asyncHandler(async (req, res) => {
-  const user = req.user;
-  const { oldPassword, newPassword } = req.body; // 'oldPassword' clearer than 'password'
+  const user = await User.findById(req.user._id).select("+password");
+  const { oldPassword, newPassword, confirmNewPassword } = req.body; // 'oldPassword' clearer than 'password'
 
-  if (!oldPassword || !newPassword) {
-    throw new ApiError(400, "oldPassword and newPassword required");
+  if (!oldPassword || !newPassword || !confirmNewPassword) {
+    throw new ApiError(
+      400,
+      "oldPassword , newPassword and confirmNewPassword are required"
+    );
   }
-
-  if (!user.isPasswordCorrect(oldPassword)) {
+  const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+  if (!isPasswordCorrect) {
     throw new ApiError(401, "Incorrect current password"); // 401 better for auth failure
   }
-
+  if (newPassword !== confirmNewPassword) {
+    throw new ApiError(400, " newpassword and confirmNewPassword should match"); // 401 better for auth failure
+  }
   if (newPassword.length < 8 || newPassword.length > 16) {
     throw new ApiError(400, "New password must be 8-16 characters");
   }
