@@ -30,5 +30,16 @@ export const deleteBook = asyncHandler(async (req, res) => {
   if (req.user.role !== "Admin") {
     throw new ApiError(403, "Only Admins can delete books");
   }
-  const book = await Book.findByIdAndDelete(req.body.id);
+  const book = await Book.findByIdAndDelete(req.body._id);
+  res.json(new ApiResponse(200, {}, "Book deleted successfully"));
+});
+
+export const getAllBooks = asyncHandler(async (req, res) => {
+  const books = await Book.find({});
+  if (!books) {
+    throw new ApiError(500, "Failed to get all books");
+  }
+  res
+    .status(200)
+    .json(new ApiResponse(200, books, "Successfully fetched all books"));
 });
