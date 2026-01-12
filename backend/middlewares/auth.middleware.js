@@ -10,7 +10,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      throw new ApiError(401, "Unauthorized access");
+      throw new ApiError(401, "User is not loggedin.");
     }
 
     const decodedInfo = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -30,7 +30,7 @@ export const isAuthorized = (...roles) => {
     if (!roles.includes(req.user.role)) {
       throw new ApiError(
         400,
-        `User with this role ${req.user.role} not allowed to access this resource`
+        `User with this role '${req.user.role}' not allowed to access this resource`
       );
     }
     next();

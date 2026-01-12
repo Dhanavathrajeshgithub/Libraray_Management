@@ -13,7 +13,6 @@ const cookieOptions = {
   secure: true,
   sameSite: "strict",
 };
-
 export const registerUser = asyncHandler(async (req, res) => {
   const { username, fullName, email, password } = req?.body;
   if (!username || !fullName || !email || !password) {
