@@ -20,9 +20,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// auth routes
+// user routes
 import userRouter from "./routes/user.routes.js";
 app.use("/api/v1/users", userRouter);
+
+// book routes
+import bookRouter from "./routes/book.routes.js";
+app.use("/api/v1/book", bookRouter);
 
 connectDB();
 

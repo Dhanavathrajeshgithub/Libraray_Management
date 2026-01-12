@@ -5,32 +5,33 @@ import { Book } from "../models/book.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const bookAdd = asyncHandler(async (req, res) => {
-  // Trust auth middleware - req.user is already verified
-  if (req.user.role !== "Admin") {
-    throw new ApiError(403, "Only Admins can add books");
+  const { title, author, description, price, quantity } = req.body;
+  if (!title || !author || !description || !price || !quantity) {
+    throw new ApiError(400, "All fields are required");
   }
 
-  const bookData = {
-    title: req.body.title?.trim(),
-    author: req.body.author?.trim(),
-    description: req.body.description,
-    price: Number(req.body.price),
-    quantity: Number(req.body.quantity),
-  };
+  const newBook = await Book.create({
+    title,
+    author,
+    description,
+    price,
+    quantity,
+  }); // Schema validates automatically
 
-  const newBook = await Book.create(bookData); // Schema validates automatically
-
+  if (!newBook) {
+    throw new ApiError(500, "Failed to insert  ");
+  }
   res
     .status(201)
     .json(new ApiResponse(201, newBook, "Book added successfully"));
 });
 
 export const deleteBook = asyncHandler(async (req, res) => {
-  // Trust auth middleware - req.user is already verified
-  if (req.user.role !== "Admin") {
-    throw new ApiError(403, "Only Admins can delete books");
+  const { id } = req.params;
+  const book = await Book.findByIdAndDelete(id);
+  if (!book) {
+    throw new ApiError(404, "Book not found.");
   }
-  const book = await Book.findByIdAndDelete(req.body._id);
   res.json(new ApiResponse(200, {}, "Book deleted successfully"));
 });
 

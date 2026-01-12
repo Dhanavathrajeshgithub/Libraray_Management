@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { User } from "./user.model";
 
 const bookSchema = new mongoose.Schema(
   {
@@ -33,4 +32,4 @@ const bookSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const Book = User.model("Book", bookSchema);
+export const Book = mongoose.model("Book", bookSchema);

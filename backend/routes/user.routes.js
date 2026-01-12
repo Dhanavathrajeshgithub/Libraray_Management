@@ -11,7 +11,7 @@ import {
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { loginLimiter } from "../middlewares/rateLimit.middleware.js";
-import { verifyJWT } from "../middlewares/verifyJwt.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.post("/register", upload.single("avatar"), registerUser);
