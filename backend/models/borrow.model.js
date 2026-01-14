@@ -1,0 +1,43 @@
+import mongoose from "mongoose";
+
+const borrowSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      ref: "User",
+      required: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    bookId: {
+      type: String,
+      ref: "Book",
+      required: true,
+    },
+    borrowDate: {
+      type: Date,
+      default: Date.now(),
+    },
+    dueDate: {
+      type: Date,
+      required: true,
+    },
+    returnDate: {
+      type: Date,
+      required: true,
+    },
+    fine: {
+      type: Number,
+      default: 0,
+    },
+    notified: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Borrow = mongoose.model("Borrow", borrowSchema);
