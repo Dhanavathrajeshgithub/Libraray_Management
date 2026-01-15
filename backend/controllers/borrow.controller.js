@@ -18,28 +18,38 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
   if (!book) {
     throw new ApiError(404, "book not found");
   }
-  if (book.quantity <= 0) {
+  if (!book.availability) {
     throw new ApiError(409, "Book is Out of Stock. Sorry, check other books");
   }
-  const borrowedObj = await Borrow.create({
+  const isAlreadyBorrowed = user.borrowedBooks.find(
+    (b) => b.bookId === bookId && b.returned === false
+  );
+  if (isAlreadyBorrowed) {
+    throw new ApiError(400, "User already borrowed this book");
+  }
+  book.quantity -= 1;
+  book.availability = book.quantity > 0;
+  await book.save({ validateModifiedOnly: true });
+  user.borrowedBooks.push({
+    bookId,
+    borrowedDate: Date.now(),
+    dueDate: Date.now() + process.env.DUEDAYS * 24 * 60 * 60 * 1000,
+  });
+  await user.save({ validateModifiedOnly: true });
+  await Borrow.create({
     userId,
     price: book.price,
     bookId,
     borrowDate: Date.now(),
-    dueDate: Date.now() + process.env.DUEDAYS * 24 * 60 * 1000,
+    dueDate: Date.now() + process.env.DUEDAYS * 24 * 60 * 60 * 1000,
     fine: process.env.FINE_PER_DAY,
   });
   if (!borrowedObj) {
     throw new ApiError(500, "Failed to create borrowed object");
   }
-  book.quantity -= 1;
-  await book.save({ validateModifiedOnly: true });
   res
     .status(201)
-    .json(
-      new ApiResponse(201, borrowedObj, "Successfully created borrowed object")
-    );
-  //const {,notified} = req.body;
+    .json(new ApiResponse(201, {}, "Successfully created borrowed object"));
 });
 export const returnBookByUser = asyncHandler(async (req, res) => {});
 export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {});
