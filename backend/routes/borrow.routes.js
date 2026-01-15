@@ -4,9 +4,9 @@ import {
   getAllBorrowedBooksByUsers,
   getBorrowedBooksByUser,
   returnBookByUser,
-} from "../controllers/borrow.controller";
-import { isAuthorized, verifyJWT } from "../middlewares/auth.middleware";
-export const router = express.Router();
+} from "../controllers/borrow.controller.js";
+import { isAuthorized, verifyJWT } from "../middlewares/auth.middleware.js";
+const router = express.Router();
 
 router.post(
   "/borrow/:bookId/:userId",
@@ -27,3 +27,5 @@ router.delete(
   isAuthorized("Admin"),
   returnBookByUser
 );
+
+export default router;

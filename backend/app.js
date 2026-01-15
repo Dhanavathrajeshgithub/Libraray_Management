@@ -28,6 +28,10 @@ app.use("/api/v1/users", userRouter);
 import bookRouter from "./routes/book.routes.js";
 app.use("/api/v1/book", bookRouter);
 
+// Borrow routes
+import borrowRouter from "./routes/borrow.routes.js";
+app.use("/api/v1/borrow", borrowRouter);
+
 connectDB();
 
 app.use(errorMiddleware);

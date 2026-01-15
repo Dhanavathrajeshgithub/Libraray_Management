@@ -26,7 +26,7 @@ const borrowSchema = new mongoose.Schema(
     },
     returnDate: {
       type: Date,
-      required: true,
+      //required: true,
     },
     fine: {
       type: Number,
