@@ -97,4 +97,25 @@ userSchema.methods.getResetPasswordToken = function () {
   this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
   return resetToken;
 };
+userSchema.methods.isBookBorrowed = function (bookId) {
+  let isAlreadyBorrowed = false;
+  this.borrowedBooks.forEach((b) => {
+    if (b.bookId == bookId && b.returned == false) {
+      isAlreadyBorrowed = true;
+    }
+  });
+  return isAlreadyBorrowed;
+};
+userSchema.methods.dueDate = function (bookId) {
+  let dueDate = null;
+  this.borrowedBooks.forEach((b) => {
+    if (b.bookId == bookId && b.returned == false) dueDate = b.dueDate;
+  });
+  return dueDate;
+};
+userSchema.methods.markAsBookReturned = function daysBorrowed(bookId) {
+  this.borrowedBooks.forEach((b) => {
+    if (b.bookId == bookId && b.returned == false) b.returned = true;
+  });
+};
 export const User = mongoose.model("User", userSchema);

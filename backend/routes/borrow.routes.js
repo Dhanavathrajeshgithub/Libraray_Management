@@ -9,7 +9,7 @@ import { isAuthorized, verifyJWT } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.post(
-  "/borrow/:bookId/:userId",
+  "/:bookId/:userId",
   verifyJWT,
   isAuthorized("Admin"),
   borrowBookByUser
