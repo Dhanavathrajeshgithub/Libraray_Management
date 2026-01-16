@@ -21,7 +21,7 @@ router.get(
   isAuthorized("Admin"),
   getAllBorrowedBooksByUsers
 );
-router.delete(
+router.post(
   "/return/:bookId/:userId",
   verifyJWT,
   isAuthorized("Admin"),

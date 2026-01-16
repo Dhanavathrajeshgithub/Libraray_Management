@@ -10,7 +10,7 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
   if (!bookId || !userId) {
     throw new ApiError(400, "Both UserId and bookId are required");
   }
-  const user = await User.findById(userId);
+  const user = await User.findOne({ _id: userId, accountVerified: true });
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -40,19 +40,22 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
     bookId,
     borrowDate: Date.now(),
     dueDate: Date.now() + process.env.DUEDAYS * 24 * 60 * 60 * 1000,
-    fine: process.env.FINE_PER_DAY,
   });
   if (!borrowedObj) {
+    book.quantity += 1;
+    book.availability = true;
+    await book.save({ validateModifiedOnly: true });
+
+    user.borrowedBooks.pop();
+    await user.save({ validateModifiedOnly: true });
     throw new ApiError(500, "Failed to create borrowed object");
   }
-  res
-    .status(201)
-    .json(new ApiResponse(201, {}, "Successfully created borrowed object"));
+  res.status(201).json(new ApiResponse(201, {}, "Book successfully Borrowed "));
 });
 
 export const returnBookByUser = asyncHandler(async (req, res) => {
   const { bookId, userId } = req.params;
-  const user = await User.findById(userId);
+  const user = await User.findOne({ _id: userId, accountVerified: true });
   const book = await Book.findById(bookId);
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -66,12 +69,12 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
   }
   const dueDate = await user.dueDate(bookId);
   const today = Date.now();
-  const amountToPay = book.price;
+  let amountToPay = book.price;
   let fine = 0;
   if (today > dueDate) {
     const diffTime = today - dueDate; // milliseconds
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // days
-    fine = FINE_PER_DAY * diffDays;
+    fine = process.env.FINE_PER_DAY * diffDays;
   }
   amountToPay += fine;
   // amount payed successfully
@@ -84,13 +87,22 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
   const borrowObj = await Borrow.findOne({ userId, bookId, returnDate: null });
   borrowObj.returnDate = today;
   if (fine) borrowObj.fine = fine;
+  borrowObj.price = book.price;
   await borrowObj.save({ validateModifiedOnly: true });
 
   // 3. Increase quantity of Book
   book.quantity++;
   await book.save({ validateModifiedOnly: true });
 
-  res.status(200).json(new ApiResponse(200, {}, "Successfully returned book"));
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        {},
+        `Successfully returned book by paying INR ${amountToPay}`
+      )
+    );
 });
 
 export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {});
