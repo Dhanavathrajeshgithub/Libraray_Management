@@ -4,6 +4,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { Borrow } from "../models/borrow.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { calculateFine } from "../utils/calculateFine.js";
 
 export const borrowBookByUser = asyncHandler(async (req, res) => {
   const { bookId, userId } = req.params;
@@ -68,15 +69,8 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User not borrowed this book");
   }
   const dueDate = await user.dueDate(bookId);
-  const today = Date.now();
-  let amountToPay = book.price;
-  let fine = 0;
-  if (today > dueDate) {
-    const diffTime = today - dueDate; // milliseconds
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); // days
-    fine = process.env.FINE_PER_DAY * diffDays;
-  }
-  amountToPay += fine;
+  const fine = calculateFine(dueDate);
+  const amountToPay = book.price + fine;
   // amount payed successfully
 
   // 1. mark as returned in user.borrowedBooks()
