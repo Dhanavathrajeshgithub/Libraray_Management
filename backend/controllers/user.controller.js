@@ -131,6 +131,13 @@ export const loginUser = asyncHandler(async (req, res) => {
   if (!(email || username) || !password) {
     throw new ApiError(400, "All fields are required");
   }
+  if (email && username) {
+    const user1 = await User.findOne({ email, accountVerified: true });
+    const user2 = await User.findOne({ username, accountVerified: true });
+    if (user1 != user2) {
+      throw new ApiError(400, "Username and Email doesn't match");
+    }
+  }
   const user = await User.findOne({
     $or: [{ email }, { username }],
     accountVerified: true,

@@ -113,9 +113,18 @@ userSchema.methods.dueDate = function (bookId) {
   });
   return dueDate;
 };
-userSchema.methods.markAsBookReturned = function daysBorrowed(bookId) {
+userSchema.methods.markAsBookReturned = function (bookId) {
   this.borrowedBooks.forEach((b) => {
     if (b.bookId == bookId && b.returned == false) b.returned = true;
   });
+};
+userSchema.methods.markAsBookNotReturned = function (bookId) {
+  let idx = -1;
+  for (let i = 0; i < this.borrowedBooks.length; i++) {
+    if (this.borrowedBooks[i].bookId == bookId) idx = i;
+  }
+  if (idx != -1) {
+    this.borrowedBooks[idx].returned = false;
+  }
 };
 export const User = mongoose.model("User", userSchema);
