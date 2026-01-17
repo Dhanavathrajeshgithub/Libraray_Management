@@ -20,9 +20,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// user routes
+// Auth routes
 import authRouter from "./routes/auth.routes.js";
-app.use("/api/v1/users", authRouter);
+app.use("/api/v1/auth", authRouter);
 
 // book routes
 import bookRouter from "./routes/book.routes.js";
@@ -32,6 +32,9 @@ app.use("/api/v1/book", bookRouter);
 import borrowRouter from "./routes/borrow.routes.js";
 app.use("/api/v1/borrow", borrowRouter);
 
+// User routes
+import userRouter from "./routes/user.routes.js";
+app.use("/api/v1/user", userRouter);
 connectDB();
 
 app.use(errorMiddleware);

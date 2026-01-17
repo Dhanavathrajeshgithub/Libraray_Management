@@ -32,7 +32,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   if (registrationAttemptsByUser?.length >= 5) {
     throw new ApiError(
       400,
-      "You have exceeded the number of registration attempts. Please try again after few minutes"
+      "You have exceeded the number of registration attempts. Please try again after few minutes",
     );
   }
   if (password.length < 8 || password.length > 16) {
@@ -72,8 +72,8 @@ export const registerUser = asyncHandler(async (req, res) => {
       new ApiResponse(
         201,
         { userId: user._id, username: user.username },
-        "User registered successfully. Check email for verification."
-      )
+        "User registered successfully. Check email for verification.",
+      ),
     );
 });
 
@@ -90,7 +90,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
   if (userAllEntries.length == 0) {
     throw new ApiError(
       404,
-      "User doesn't exists with this email or already verified"
+      "User doesn't exists with this email or already verified",
     );
   }
 
@@ -173,8 +173,8 @@ export const loginUser = asyncHandler(async (req, res) => {
           avatar: user.avatar,
           role: user.role,
         },
-        "User logged in successfully"
-      )
+        "User logged in successfully",
+      ),
     );
 });
 
@@ -217,7 +217,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     res
       .status(200)
       .json(
-        new ApiResponse(200, {}, `Email sent to  ${user.email} successfully`)
+        new ApiResponse(200, {}, `Email sent to  ${user.email} successfully`),
       );
   } catch (error) {
     user.resetPasswordToken = undefined;
@@ -250,7 +250,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   if (req.body.password.length < 8 || req.body.password.length > 16) {
     throw new ApiError(
       400,
-      "Password length must be between 8 and 16 inclusively"
+      "Password length must be between 8 and 16 inclusively",
     );
   }
 
@@ -271,7 +271,7 @@ export const updatePassword = asyncHandler(async (req, res) => {
   if (!oldPassword || !newPassword || !confirmNewPassword) {
     throw new ApiError(
       400,
-      "oldPassword , newPassword and confirmNewPassword are required"
+      "oldPassword , newPassword and confirmNewPassword are required",
     );
   }
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
