@@ -99,8 +99,8 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
         new ApiResponse(
           200,
           {},
-          `Successfully returned book by paying INR ${amountToPay}`
-        )
+          `Successfully returned book by paying INR ${amountToPay}`,
+        ),
       );
   } catch (error) {
     if (user) {
@@ -120,7 +120,7 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
     }
     throw new ApiError(
       error.statusCode || 500,
-      error.message || "Internal server error"
+      error.message || "Internal server error",
     );
   }
 });
@@ -133,7 +133,18 @@ export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, user.borrowedBooks, "Successfully returned books")
+      new ApiResponse(200, user.borrowedBooks, "Successfully returned books"),
     );
 });
-export const getAllBorrowedBooksByUsers = asyncHandler(async (req, res) => {});
+export const getAllBorrowedBooksByUsers = asyncHandler(async (req, res) => {
+  const borrowedBooks = await Borrow.find({});
+  if (!borrowedBooks) {
+    throw new ApiError(500, "Failed to get all borrowed books");
+  }
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, borrowedBooks, "Sucessfully get all borrowed books"),
+    );
+});

@@ -13,7 +13,7 @@ app.use(
     origin: [process.env.FRONTEND_URL],
     methods: ["GET", "POST", "DELETE", "PATCH", "PUT"],
     credentials: true,
-  })
+  }),
 );
 
 app.use(cookieParser());
@@ -21,8 +21,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // user routes
-import userRouter from "./routes/user.routes.js";
-app.use("/api/v1/users", userRouter);
+import authRouter from "./routes/auth.routes.js";
+app.use("/api/v1/users", authRouter);
 
 // book routes
 import bookRouter from "./routes/book.routes.js";
