@@ -8,6 +8,12 @@ import {
 const router = express.Router();
 
 router.get("/all", verifyJWT, isAuthorized("Admin"), getAllUsers);
-router.post("/register-admin", upload.single("avatar"), registerNewAdmin);
+router.post(
+  "/register-admin",
+  verifyJWT,
+  isAuthorized("Admin"),
+  upload.single("avatar"),
+  registerNewAdmin,
+);
 
 export default router;

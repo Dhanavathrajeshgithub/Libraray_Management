@@ -14,6 +14,9 @@ const cookieOptions = {
   sameSite: "strict",
 };
 export const registerUser = asyncHandler(async (req, res) => {
+  if (!req.body) {
+    throw new ApiError(400, "All fields are required");
+  }
   const { username, fullName, email, password } = req?.body;
   if (!username || !fullName || !email || !password) {
     throw new ApiError(400, "All fields are required");
