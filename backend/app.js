@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import { connectDB } from "./database/db.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
+import { notifyUser } from "./services/notifyUser.js";
 export const app = express();
 
 dotenv.config({ path: "./config/config.env" });
@@ -35,6 +36,8 @@ app.use("/api/v1/borrow", borrowRouter);
 // User routes
 import userRouter from "./routes/user.routes.js";
 app.use("/api/v1/user", userRouter);
+
+notifyUser();
 connectDB();
 
 app.use(errorMiddleware);
