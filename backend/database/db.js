@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 export const connectDB = () => {
   mongoose
-    .connect(process.env.MONGODB_URI, {
+    .connect(process.env.MONGO_URI, {
       dbName: "MERN_LIBRARY_MANAGEMENT2",
     })
     .then(() => {
