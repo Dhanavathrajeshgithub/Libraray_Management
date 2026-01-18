@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { User } from "../models/user.model";
+import { User } from "../models/user.model.js";
 
 export const removeUnverifiedUser = () => {
   cron.schedule("*/10 * * * *", async () => {

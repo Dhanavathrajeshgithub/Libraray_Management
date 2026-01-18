@@ -5,6 +5,7 @@ import cors from "cors";
 import { connectDB } from "./database/db.js";
 import errorMiddleware from "./middlewares/error.middleware.js";
 import { notifyUser } from "./services/notifyUser.js";
+import { removeUnverifiedUser } from "./services/removeUnverifiedUsers.js";
 export const app = express();
 
 dotenv.config({ path: "./config/config.env" });
@@ -38,6 +39,7 @@ import userRouter from "./routes/user.routes.js";
 app.use("/api/v1/user", userRouter);
 
 notifyUser();
+removeUnverifiedUser();
 connectDB();
 
 app.use(errorMiddleware);
