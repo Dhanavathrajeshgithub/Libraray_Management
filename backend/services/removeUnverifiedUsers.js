@@ -10,7 +10,7 @@ export const removeUnverifiedUser = () => {
         createdAt: { $lte: thirtyMinutesAgo },
       });
     } catch (error) {
-      console.log("Error while deleting unverified users");
+      console.log("Error while deleting unverified users", error);
     }
   });
 };
