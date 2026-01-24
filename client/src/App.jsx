@@ -6,6 +6,8 @@ import Register from "./pages/Register.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import OTP from "./pages/OTP.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+
+import { ToastContainer } from "react-toastify";
 const App = () => {
   return (
     <Router>
@@ -17,6 +19,8 @@ const App = () => {
         <Route path="/otp-verification/:email" element={<OTP />} />
         <Route path="/password/reset/:token" element={<ResetPassword />} />
       </Routes>
+
+      <ToastContainer theme="dark" />
     </Router>
   );
 };
