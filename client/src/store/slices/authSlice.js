@@ -58,9 +58,55 @@ const authSlice = createSlice({
     loginFailed(state, action) {
       state.loading = false;
       state.error = action.payload;
+      state.message = null;
+    },
+
+    // User Logout
+    logoutRequest(state) {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    },
+    logoutSuccess(state, action) {
+      state.loading = false;
+      state.message = action.payload;
+      state.isAuthenticated = false;
+      state.user = null;
+    },
+    logoutFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+      state.message = null;
+    },
+
+    // reset all state variables
+    resetAuthSlice(state) {
+      state.loading = false;
+      state.error = null;
+      state.message = null;
+      state.user = state.user;
+      state.isAuthenticated = state.isAuthenticated;
     },
   },
 });
+
+export const resetAuthSlice = () => async (dispatch) => {
+  dispatch(authSlice.actions.resetAuthSlice());
+};
+export const logout = () => async (dispatch) => {
+  dispatch(authSlice.actions.logoutRequest());
+  await axios
+    .post("http://localhost:8000/api/v1/auth/logout", {
+      withCredentials: true,
+    })
+    .then((res) => {
+      dispatch(authSlice.actions.logoutSuccess(res.data.message));
+      dispatch(authSlice.actions.resetAuthSlice());
+    })
+    .catch((error) => {
+      dispatch(authSlice.actions.logoutFailed(error.response.data.message));
+    });
+};
 
 export const login = (data) => async (dispatch) => {
   dispatch(authSlice.actions.loginRequest());
