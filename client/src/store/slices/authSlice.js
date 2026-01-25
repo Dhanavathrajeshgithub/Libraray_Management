@@ -154,21 +154,21 @@ const authSlice = createSlice({
   },
 });
 
-export const updatePassword = (data, token) => async (dispatch) => {
-  dispatch(authSlice.actions.resetPasswordRequest());
+export const updatePassword = (data) => async (dispatch) => {
+  dispatch(authSlice.actions.updatePasswordRequest());
   axios
-    .put(`http://localhost:8000/api/v1/auth/password/reset/${token}`, data, {
+    .put(`http://localhost:8000/api/v1/auth/password/update`, data, {
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
       },
     })
     .then((res) => {
-      dispatch(authSlice.actions.resetPasswordSuccess(res.data));
+      dispatch(authSlice.actions.updatePasswordSuccess(res.data.message));
     })
     .catch((error) => {
       dispatch(
-        authSlice.actions.resetPasswordFailed(error.response.data.message),
+        authSlice.actions.updatePasswordFailed(error.response.data.message),
       );
     });
 };
