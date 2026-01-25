@@ -304,3 +304,5 @@ export const register = (data) => async (dispatch) => {
       dispatch(authSlice.actions.registerFailed(error.response.data.message));
     });
 };
+
+export default authSlice.reducer;
