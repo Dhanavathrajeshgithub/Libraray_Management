@@ -96,6 +96,21 @@ const authSlice = createSlice({
       state.message = null;
     },
 
+    // Forgot Password
+    forgotPasswordRequest(state) {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    },
+    forgotPasswordSuccess(state, action) {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    forgotPasswordFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
     // reset all state variables
     resetAuthSlice(state) {
       state.loading = false;
@@ -106,6 +121,29 @@ const authSlice = createSlice({
     },
   },
 });
+
+export const forgotPassword = (email) => async (dispatch) => {
+  dispatch(authSlice.actions.forgotPasswordRequest());
+  axios
+    .post(
+      "http://localhost:8000/api/v1/auth/password/forgot",
+      { email },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    )
+    .then((res) => {
+      dispatch(authSlice.actions.forgotPasswordSuccess(res.data));
+    })
+    .catch((error) => {
+      dispatch(
+        authSlice.actions.forgotPasswordFailed(error.response.data.message),
+      );
+    });
+};
 
 export const getUser = () => async (dispatch) => {
   dispatch(authSlice.actions.getUserRequest());
