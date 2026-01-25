@@ -61,6 +61,23 @@ const authSlice = createSlice({
       state.message = null;
     },
 
+    // get User
+    getUserRequest(state) {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    },
+    getUserSuccess(state, action) {
+      state.loading = false;
+      state.user = action.payload.user;
+      state.isAuthenticated = true;
+    },
+    getUserFailed(state, action) {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+    },
+
     // User Logout
     logoutRequest(state) {
       state.loading = true;
@@ -90,12 +107,27 @@ const authSlice = createSlice({
   },
 });
 
+export const getUser = () => async (dispatch) => {
+  dispatch(authSlice.actions.getUserRequest());
+  axios
+    .get("http://localhost:8000/api/v1/auth/profile", {
+      withCredentials: true,
+    })
+    .then((res) => {
+      dispatch(authSlice.actions.getUserSuccess(res.data));
+    })
+    .catch((error) => {
+      dispatch(authSlice.actions.getUserFailed(error.response.data.message));
+    });
+};
+
 export const resetAuthSlice = () => async (dispatch) => {
   dispatch(authSlice.actions.resetAuthSlice());
 };
+
 export const logout = () => async (dispatch) => {
   dispatch(authSlice.actions.logoutRequest());
-  await axios
+  axios
     .post("http://localhost:8000/api/v1/auth/logout", {
       withCredentials: true,
     })
@@ -110,7 +142,7 @@ export const logout = () => async (dispatch) => {
 
 export const login = (data) => async (dispatch) => {
   dispatch(authSlice.actions.loginRequest());
-  await axios
+  axios
     .post("http://localhost:8000/api/v1/auth/login", data, {
       withCredentials: true,
       headers: {
@@ -127,7 +159,7 @@ export const login = (data) => async (dispatch) => {
 
 export const otpVerification = (email, otp) => async (dispatch) => {
   dispatch(authSlice.actions.otpVerificationRequest());
-  await axios
+  axios
     .post(
       "http://localhost:8000/api/v1/auth/verify-otp",
       { email, otp },
@@ -150,7 +182,7 @@ export const otpVerification = (email, otp) => async (dispatch) => {
 
 export const register = (data) => async (dispatch) => {
   dispatch(authSlice.actions.registerRequest());
-  await axios
+  axios
     .post("http://localhost:8000/api/v1/auth/register", data, {
       withCredentials: true,
       headers: {
