@@ -128,6 +128,21 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
 
+    // update Password
+    updatePasswordRequest(state) {
+      state.loading = true;
+      state.error = null;
+      state.message = null;
+    },
+    updatePasswordSuccess(state, action) {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    updatePasswordFailed(state, action) {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
     // reset all state variables
     resetAuthSlice(state) {
       state.loading = false;
@@ -138,6 +153,25 @@ const authSlice = createSlice({
     },
   },
 });
+
+export const updatePassword = (data, token) => async (dispatch) => {
+  dispatch(authSlice.actions.resetPasswordRequest());
+  axios
+    .put(`http://localhost:8000/api/v1/auth/password/reset/${token}`, data, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => {
+      dispatch(authSlice.actions.resetPasswordSuccess(res.data));
+    })
+    .catch((error) => {
+      dispatch(
+        authSlice.actions.resetPasswordFailed(error.response.data.message),
+      );
+    });
+};
 
 export const resetPassword = (data, token) => async (dispatch) => {
   dispatch(authSlice.actions.resetPasswordRequest());
