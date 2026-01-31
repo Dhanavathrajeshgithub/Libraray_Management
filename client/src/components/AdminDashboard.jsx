@@ -26,11 +26,11 @@ ChartJS.register(
   Legend,
   LineElement,
   PointElement,
-  ArcElement
+  ArcElement,
 );
 
 const AdminDashboard = () => {
-  return <></>;
+  return <>Admin</>;
 };
 
 export default AdminDashboard;
