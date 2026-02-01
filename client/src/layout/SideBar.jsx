@@ -42,10 +42,68 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
         </div>
 
         <nav className="flex-1 px-6 space-y-2 ">
-          <button className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2">
+          {/* Dashboard */}
+          <button
+            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+            onClick={() => setSelectedComponent("Dashboard")}
+          >
             <img src={dashboardIcon} alt="Icon" /> <span>Dashboard</span>
           </button>
+
+          {/* Books */}
+          <button
+            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+            onClick={() => setSelectedComponent("Books")}
+          >
+            <img src={bookIcon} alt="Icon" /> <span>Books</span>
+          </button>
+
+          {isAuthenticated && user?.role === "Admin" && (
+            <>
+              <button
+                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+                onClick={() => setSelectedComponent("Catalog")}
+              >
+                <img src={catalogIcon} alt="Icon" /> <span>Catalog</span>
+              </button>
+
+              <button
+                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+                onClick={() => setSelectedComponent("Users")}
+              >
+                <img src={usersIcon} alt="Icon" /> <span>Users</span>
+              </button>
+
+              <button
+                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+                // onClick={() => setSelectedComponent("Users")}
+              >
+                {/* <img src={usersIcon} alt="Icon" /> <span>Users</span> */}
+                <RiAdminFill className="w-6 h-6" /> <span>Add New Admin</span>
+              </button>
+            </>
+          )}
+
+          {isAuthenticated && user?.role === "User" && (
+            <>
+              <button
+                className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+                onClick={() => setSelectedComponent("My Borrowed Books")}
+              >
+                <img src={catalogIcon} alt="Icon" />{" "}
+                <span>My Borrowed Books</span>
+              </button>
+            </>
+          )}
+
+          <button className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2">
+            <img src={settingIcon} alt="Icon" /> <span>Update Credentials</span>
+          </button>
         </nav>
+
+        <button className="py-2 font-medium text-center bg-transparent rounded-md hover:cursor-pointer flex items-center justify-center space-x-5 mx-auto w-fit">
+          <img src={logoutIcon} alt="Icon" /> <span>Log Out</span>
+        </button>
       </aside>
     </>
   );
