@@ -12,9 +12,12 @@ import { toast } from "react-toastify";
 
 import { useDispatch, useSelector } from "react-redux";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
+import { toggleAddNewAdminPopup } from "../store/slices/popUpSlice";
+import AddNewAdmin from "../popups/AddNewAdmin";
 
 const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const dispatch = useDispatch();
+  const { addNewAdminPopup } = useSelector((state) => state.popup);
   const { loading, error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth,
   );
@@ -58,7 +61,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             <img src={bookIcon} alt="Icon" /> <span>Books</span>
           </button>
 
-          {isAuthenticated && user?.role === "Admin" && (
+          {
             <>
               <button
                 className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
@@ -76,13 +79,13 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
 
               <button
                 className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
-                // onClick={() => setSelectedComponent("Users")}
+                onClick={() => dispatch(toggleAddNewAdminPopup())}
               >
                 {/* <img src={usersIcon} alt="Icon" /> <span>Users</span> */}
                 <RiAdminFill className="w-6 h-6" /> <span>Add New Admin</span>
               </button>
             </>
-          )}
+          }
 
           {isAuthenticated && user?.role === "User" && (
             <>
@@ -101,10 +104,23 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
           </button>
         </nav>
 
-        <button className="py-2 font-medium text-center bg-transparent rounded-md hover:cursor-pointer flex items-center justify-center space-x-5 mx-auto w-fit">
-          <img src={logoutIcon} alt="Icon" /> <span>Log Out</span>
-        </button>
+        <div className="px-6 py-4">
+          <button
+            className="py-2 font-medium text-center bg-transparent rounded-md hover:cursor-pointer flex items-center justify-center space-x-5 mx-auto w-fit"
+            onClick={handleLogout}
+          >
+            <img src={logoutIcon} alt="Icon" /> <span>Log Out</span>
+          </button>
+        </div>
+        <img
+          src={closeIcon}
+          alt="icon"
+          onClick={() => setIsSideBarOpen(!isSideBarOpen)}
+          className="h-fit w-fit absolute top-0 right-4 mt-4 block md:hidden"
+        />
       </aside>
+
+      {addNewAdminPopup && <AddNewAdmin />}
     </>
   );
 };
