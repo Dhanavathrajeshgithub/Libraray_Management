@@ -290,19 +290,22 @@ export const otpVerification = (email, otp) => async (dispatch) => {
 
 export const register = (data) => async (dispatch) => {
   dispatch(authSlice.actions.registerRequest());
-  axios
-    .post("http://localhost:8000/api/v1/auth/register", data, {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const res = await axios.post(
+      "http://localhost:8000/api/v1/auth/register",
+      data,
+      {
+        withCredentials: true,
       },
-    })
-    .then((res) => {
-      dispatch(authSlice.actions.registerSuccess(res.data));
-    })
-    .catch((error) => {
-      dispatch(authSlice.actions.registerFailed(error.response.data.message));
-    });
+    );
+    dispatch(authSlice.actions.registerSuccess(res.data));
+  } catch (error) {
+    dispatch(
+      authSlice.actions.registerFailed(
+        error?.response?.data?.message || "Something went wrong",
+      ),
+    );
+  }
 };
 
 export default authSlice.reducer;
