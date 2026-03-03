@@ -27,11 +27,11 @@ ChartJS.register(
   Legend,
   LineElement,
   PointElement,
-  ArcElement
+  ArcElement,
 );
 
 const UserDashboard = () => {
-  return <></>;
+  return <>User</>;
 };
 
 export default UserDashboard;
