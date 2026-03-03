@@ -162,7 +162,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, {
       ...cookieOptions,
-      maxAge: 2 * 24 * 60 * 1000,
+      maxAge: 2 * 24 * 60 * 60 * 1000,
     })
     .json(
       new ApiResponse(

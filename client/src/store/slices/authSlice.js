@@ -252,9 +252,6 @@ export const login = (data) => async (dispatch) => {
   axios
     .post("http://localhost:8000/api/v1/auth/login", data, {
       withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
     .then((res) => {
       dispatch(authSlice.actions.loginSuccess(res.data));
