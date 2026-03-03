@@ -41,27 +41,30 @@ const Home = () => {
               ) : (
                 <AdminDashboard />
               );
-              break;
 
             case "Books":
               return <BookManagement />;
-              break;
 
             case "Catalog":
-              if (user.role === "Admin") {
-                return <Catalog />;
-              }
-              break;
+              return user?.role === "Admin" ? (
+                <Catalog />
+              ) : user?.role === "User" ? (
+                <UserDashboard />
+              ) : (
+                <AdminDashboard />
+              );
 
             case "Users":
-              if (user.role === "Admin") {
-                return <Users />;
-              }
-              break;
+              return user?.role === "Admin" ? (
+                <Users />
+              ) : user?.role === "User" ? (
+                <UserDashboard />
+              ) : (
+                <AdminDashboard />
+              );
 
             case "My Borrowed Books":
               return <MyBorrowedbooks />;
-              break;
 
             default:
               return user?.role === "User" ? (

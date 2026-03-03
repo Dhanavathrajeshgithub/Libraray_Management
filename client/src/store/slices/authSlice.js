@@ -36,7 +36,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.message = action.payload.message;
       state.isAuthenticated = true;
-      state.user = action.payload.user;
+      state.user = action.payload.data;
     },
     otpVerificationFailed(state, action) {
       state.loading = false;
@@ -53,7 +53,7 @@ const authSlice = createSlice({
       state.loading = false;
       state.message = action.payload.message;
       state.isAuthenticated = true;
-      state.user = action.payload.user;
+      state.user = action.payload.data;
     },
     loginFailed(state, action) {
       state.loading = false;
@@ -69,7 +69,7 @@ const authSlice = createSlice({
     },
     getUserSuccess(state, action) {
       state.loading = false;
-      state.user = action.payload.user;
+      state.user = action.payload.data;
       state.isAuthenticated = true;
     },
     getUserFailed(state, action) {
@@ -104,7 +104,7 @@ const authSlice = createSlice({
     },
     forgotPasswordSuccess(state, action) {
       state.loading = false;
-      state.message = action.payload;
+      state.message = action.payload.message;
     },
     forgotPasswordFailed(state, action) {
       state.loading = false;
@@ -120,8 +120,8 @@ const authSlice = createSlice({
     resetPasswordSuccess(state, action) {
       state.loading = false;
       state.message = action.payload.message;
-      state.user = action.payload.user;
-      state.isAuthenticated = true;
+      // state.user = action.payload.user;
+      // state.isAuthenticated = true;
     },
     resetPasswordFailed(state, action) {
       state.loading = false;
@@ -148,8 +148,6 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
       state.message = null;
-      state.user = state.user;
-      state.isAuthenticated = state.isAuthenticated;
     },
   },
 });
@@ -236,18 +234,19 @@ export const resetAuthSlice = () => async (dispatch) => {
 export const logout = () => async (dispatch) => {
   dispatch(authSlice.actions.logoutRequest());
   axios
-    .post("http://localhost:8000/api/v1/auth/logout", {
-      withCredentials: true,
-    })
+    .post(
+      "http://localhost:8000/api/v1/auth/logout",
+      {},
+      { withCredentials: true },
+    )
     .then((res) => {
       dispatch(authSlice.actions.logoutSuccess(res.data.message));
-      dispatch(authSlice.actions.resetAuthSlice());
+      //dispatch(authSlice.actions.resetAuthSlice());
     })
     .catch((error) => {
       dispatch(authSlice.actions.logoutFailed(error.response.data.message));
     });
 };
-
 export const login = (data) => async (dispatch) => {
   dispatch(authSlice.actions.loginRequest());
   axios

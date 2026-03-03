@@ -21,9 +21,6 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const { loading, error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth,
   );
-  const handleLogout = () => {
-    dispatch(logout());
-  };
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -34,6 +31,10 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
       dispatch(resetAuthSlice());
     }
   }, [dispatch, isAuthenticated, error, loading, message]);
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
   return (
     <>
       <aside

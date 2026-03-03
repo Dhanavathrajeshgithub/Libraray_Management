@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { otpVerification, resetAuthSlice } from "../store/slices/authSlice";
 import { toast } from "react-toastify";
 const OTP = () => {
-  const [otp, setOtp] = useState(null);
+  const [otp, setOtp] = useState("");
   const { email } = useParams();
   const dispatch = useDispatch();
   const { loading, error, message, user, isAuthenticated } = useSelector(
@@ -17,14 +17,15 @@ const OTP = () => {
     dispatch(otpVerification(email, otp));
   };
   useEffect(() => {
-    // if (message) {
-    //   toast.success(message);
-    // }
+    if (message) {
+      toast.success(message);
+      dispatch(resetAuthSlice());
+    }
     if (error) {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [dispatch, isAuthenticated, loading, error]);
+  }, [message, error, dispatch]);
 
   if (isAuthenticated) {
     return <Navigate to={"/"} />;
@@ -55,7 +56,8 @@ const OTP = () => {
             <form onSubmit={handleOtpVerification}>
               <div className="mb-4">
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="OTP"
