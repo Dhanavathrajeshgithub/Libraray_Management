@@ -17,15 +17,14 @@ const OTP = () => {
     dispatch(otpVerification(email, otp));
   };
   useEffect(() => {
-    if (message) {
-      toast.success(message);
-      dispatch(resetAuthSlice());
-    }
+    // if (message) {
+    //   toast.success(message);
+    // }
     if (error) {
       toast.error(error);
       dispatch(resetAuthSlice());
     }
-  }, [message, error, dispatch]);
+  }, [message, error, dispatch, isAuthenticated, loading]);
 
   if (isAuthenticated) {
     return <Navigate to={"/"} />;

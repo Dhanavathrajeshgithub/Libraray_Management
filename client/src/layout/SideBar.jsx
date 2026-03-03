@@ -12,7 +12,10 @@ import { toast } from "react-toastify";
 
 import { useDispatch, useSelector } from "react-redux";
 import { logout, resetAuthSlice } from "../store/slices/authSlice";
-import { toggleAddNewAdminPopup } from "../store/slices/popUpSlice";
+import {
+  toggleAddNewAdminPopup,
+  toggleSettingPopup,
+} from "../store/slices/popUpSlice";
 import AddNewAdmin from "../popups/AddNewAdmin";
 
 const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
@@ -21,6 +24,9 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
   const { loading, error, message, user, isAuthenticated } = useSelector(
     (state) => state.auth,
   );
+  const handleLogout = () => {
+    dispatch(logout());
+  };
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -31,9 +37,6 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
       dispatch(resetAuthSlice());
     }
   }, [dispatch, isAuthenticated, error, loading, message]);
-  const handleLogout = () => {
-    dispatch(logout());
-  };
 
   return (
     <>
@@ -92,7 +95,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             <>
               <button
                 className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
-                onClick={() => setSelectedComponent("My Borrowed Books")}
+                onClick={() => dispatch(toggleSettingPopup())}
               >
                 <img src={catalogIcon} alt="Icon" />{" "}
                 <span>My Borrowed Books</span>

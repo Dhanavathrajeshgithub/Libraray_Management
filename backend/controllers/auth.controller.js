@@ -11,7 +11,6 @@ import crypto from "crypto";
 const cookieOptions = {
   httpOnly: true,
   secure: true,
-  sameSite: "strict",
 };
 export const registerUser = asyncHandler(async (req, res) => {
   if (!req.body) {
