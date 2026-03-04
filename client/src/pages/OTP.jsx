@@ -60,12 +60,14 @@ const OTP = () => {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="OTP"
+                  required
                   className="w-full px-4 py-3 border border-black rounded-md focus:outline-none"
                 />
               </div>
               <button
                 type="submit"
                 className="border-2 mt-5 border-black w-full font-semibold bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black transition"
+                disabled={loading ? true : false}
               >
                 Verify
               </button>

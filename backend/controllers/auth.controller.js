@@ -199,6 +199,10 @@ export const getUser = asyncHandler(async (req, res) => {
 });
 
 export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    throw new ApiError(400, "Provide email or Invalid email");
+  }
   const user = await User.findOne({
     email: req.body?.email,
     accountVerified: true,
