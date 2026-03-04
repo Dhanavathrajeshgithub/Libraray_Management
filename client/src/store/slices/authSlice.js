@@ -173,21 +173,23 @@ export const updatePassword = (data) => async (dispatch) => {
 
 export const resetPassword = (data, token) => async (dispatch) => {
   dispatch(authSlice.actions.resetPasswordRequest());
-  axios
-    .put(`http://localhost:8000/api/v1/auth/password/reset/${token}`, data, {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const res = await axios.put(
+      `http://localhost:8000/api/v1/auth/password/reset/${token}`,
+      data, // JSON body
+      {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
       },
-    })
-    .then((res) => {
-      dispatch(authSlice.actions.resetPasswordSuccess(res.data));
-    })
-    .catch((error) => {
-      dispatch(
-        authSlice.actions.resetPasswordFailed(error.response.data.message),
-      );
-    });
+    );
+    dispatch(authSlice.actions.resetPasswordSuccess(res.data));
+  } catch (error) {
+    dispatch(
+      authSlice.actions.resetPasswordFailed(
+        error?.response?.data?.message || "Something went wrong",
+      ),
+    );
+  }
 };
 
 export const forgotPassword = (email) => async (dispatch) => {
