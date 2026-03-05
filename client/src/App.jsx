@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -9,7 +9,14 @@ import ResetPassword from "./pages/ResetPassword.jsx";
 
 import { ToastContainer } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "./store/slices/authSlice.js";
 const App = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getUser());
+  }, []);
   return (
     <Router>
       <Routes>
