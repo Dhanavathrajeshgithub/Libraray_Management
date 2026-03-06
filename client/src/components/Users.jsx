@@ -42,10 +42,34 @@ const Users = () => {
                   <th className="px-4 py-2 text-center">Registered on</th>
                 </tr>
               </thead>
+
+              <tbody>
+                {users
+                  .filter((u) => u.role == "User")
+                  .map((user, idx) => (
+                    <tr
+                      key={user?._id}
+                      className={(idx + 1) % 2 == 0 ? "bg-gray-50" : ""}
+                    >
+                      <td className="px-4 py-2">{idx + 1}</td>
+                      <td className="px-4 py-2">{user?.fullName}</td>
+                      <td className="px-4 py-2">{user?.email}</td>
+                      <td className="px-4 py-2">{user?.role}</td>
+                      <td className="px-4 py-2">
+                        {user?.borrowedBooks.length}
+                      </td>
+                      <td className="px-4 py-2">
+                        {formatDate(user?.createdAt)}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
             </table>
           </div>
         ) : (
-          {}
+          <h3 className="text-3xl mt-5 font-medium">
+            No Registered user found in library
+          </h3>
         )}
       </main>
     </>
