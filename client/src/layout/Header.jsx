@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import settingIcon from "../assets/setting.png";
 import userIcon from "../assets/user.png";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,13 +22,12 @@ const Header = () => {
 
       const options = { month: "short", date: "numeric", year: "numeric" };
       setCurrentDate(now.toLocaleDateString("en-US", options));
-
-      updateDateTime();
-
-      const intervalId = setInterval(updateDateTime, 1000);
-
-      return () => clearInterval(intervalId);
     };
+    updateDateTime();
+
+    const intervalId = setInterval(updateDateTime, 1000);
+
+    return () => clearInterval(intervalId);
   }, []);
   return (
     <>
@@ -38,7 +37,7 @@ const Header = () => {
           <img src={userIcon} alt="user icon" className="w-8 h-8" />
           <div className="flex flex-col">
             <span className="text-sm font-medium sm:text-lg lg:text-xl sm:font-semibold ">
-              {user?.name}
+              {user?.fullName}
             </span>
             <span className="text-sm font-medium sm:text-lg  sm:font-medium ">
               {user?.role}

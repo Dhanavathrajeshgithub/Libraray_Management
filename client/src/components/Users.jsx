@@ -1,4 +1,5 @@
-import React from "react";
+// import React from "react";
+import Header from "../layout/Header";
 import { useSelector } from "react-redux";
 const Users = () => {
   const { users } = useSelector((state) => state.user);
@@ -12,8 +13,43 @@ const Users = () => {
     return result;
   };
 
-  console.log(formatDate("2026-01-19T13:44:37.606+00:00"));
-  return <>USERSSS</>;
+  return (
+    <>
+      <main className="relative flex-1 p-6 pt-28">
+        <Header />
+        {/* SUB HEADER */}
+        <header className="flex flex-col gap-3 md:flex-row md:justify-between md:items-center">
+          <h2 className="text-xl font-medium md:text-2xl md:font-semibold">
+            Registered Users
+          </h2>
+        </header>
+
+        {/* TABLE */}
+
+        {users?.length > 0 &&
+        users.filter((u) => u.role == "User").length > 0 ? (
+          <div className="mt-6 overflow-auto bg-white rounded-md shadow-lg">
+            <table className="min-w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="px-4 py-2 text-left">ID</th>
+                  <th className="px-4 py-2 text-left">NAME</th>
+                  <th className="px-4 py-2 text-left">EMAIL</th>
+                  <th className="px-4 py-2 text-left">ROLE</th>
+                  <th className="px-4 py-2 text-center">
+                    No. of Books Borrowed
+                  </th>
+                  <th className="px-4 py-2 text-center">Registered on</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        ) : (
+          {}
+        )}
+      </main>
+    </>
+  );
 };
 
 export default Users;
