@@ -6,8 +6,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 export const getAllUsers = asyncHandler(async (req, res) => {
   const users = await User.find({ accountVerified: true });
-  if (!users) {
-    throw new ApiError(500, "Failed to get all users");
+  if (users.length === 0) {
+    throw new ApiError(404, "No users found");
   }
   res
     .status(200)
@@ -15,9 +15,6 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 export const registerNewAdmin = asyncHandler(async (req, res) => {
-  if (!req.body) {
-    throw new ApiError(400, "All fields are required");
-  }
   const { username, fullName, email, password } = req.body;
   if (!username || !fullName || !email || !password) {
     throw new ApiError(400, "All fields are required");
