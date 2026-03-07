@@ -77,6 +77,7 @@ const AddNewAdmin = () => {
                     accept="image/*"
                     className="hidden"
                     onChange={handleImageChange}
+                    required
                   />
                 </label>
               </div>
@@ -91,6 +92,7 @@ const AddNewAdmin = () => {
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Admin's FullName"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md  focus:ring-black"
+                  required
                 />
               </div>
 
@@ -104,6 +106,7 @@ const AddNewAdmin = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Admin's UserName"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md  focus:ring-black"
+                  required
                 />
               </div>
 
@@ -115,6 +118,7 @@ const AddNewAdmin = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Admin's Email"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md  focus:ring-black"
+                  required
                 />
               </div>
 
@@ -128,6 +132,7 @@ const AddNewAdmin = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Admin's Password"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md  focus:ring-black"
+                  required
                 />
               </div>
 
