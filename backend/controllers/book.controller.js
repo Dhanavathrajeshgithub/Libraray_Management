@@ -1,6 +1,5 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { User } from "../models/user.model.js";
 import { Book } from "../models/book.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -37,7 +36,7 @@ export const deleteBook = asyncHandler(async (req, res) => {
 
 export const getAllBooks = asyncHandler(async (req, res) => {
   const books = await Book.find({});
-  if (!books) {
+  if (books.length == 0) {
     throw new ApiError(500, "Failed to get all books");
   }
   res
