@@ -91,6 +91,7 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
 
     // 3. Increase quantity of Book
     book.quantity++;
+    book.availability = book.quantity > 0;
     await book.save({ validateModifiedOnly: true });
     quantityIncreased = true;
     res
@@ -116,6 +117,7 @@ export const returnBookByUser = asyncHandler(async (req, res) => {
 
     if (quantityIncreased) {
       book.quantity--;
+      book.availability = book.quantity > 0;
       await book.save({ validateModifiedOnly: true });
     }
     throw new ApiError(
@@ -133,12 +135,16 @@ export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {
   res
     .status(200)
     .json(
-      new ApiResponse(200, user.borrowedBooks, "Successfully returned books"),
+      new ApiResponse(
+        200,
+        user.borrowedBooks,
+        "Successfully fetched borrowed books",
+      ),
     );
 });
 export const getAllBorrowedBooksByUsers = asyncHandler(async (req, res) => {
   const borrowedBooks = await Borrow.find({});
-  if (!borrowedBooks) {
+  if (borrowedBooks.length == 0) {
     throw new ApiError(500, "Failed to get all borrowed books");
   }
 
