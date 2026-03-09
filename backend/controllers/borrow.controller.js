@@ -144,7 +144,7 @@ export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {
 });
 export const getAllBorrowedBooksByUsers = asyncHandler(async (req, res) => {
   const borrowedBooks = await Borrow.find({});
-  if (borrowedBooks.length == 0) {
+  if (!borrowedBooks) {
     throw new ApiError(500, "Failed to get all borrowed books");
   }
 

@@ -13,6 +13,9 @@ import {
   resetBorrowSlice,
 } from "../store/slices/borrowSlice";
 import { fetchAllBooks, resetBookSlice } from "../store/slices/bookSlice";
+import AddBookPopup from "../popups/AddBookPopup";
+import ReadBookPopup from "../popups/ReadBookPopup";
+import RecordBookPopup from "../popups/RecordBookPopup";
 const BookManagement = () => {
   const dispatch = useDispatch();
   const { loading, error, message, books } = useSelector((state) => state.book);
@@ -52,23 +55,15 @@ const BookManagement = () => {
       dispatch(resetBorrowSlice());
       dispatch(resetBookSlice());
     }
-  }, [
-    dispatch,
-    message,
-    error,
-    loading,
-    borrowSliceError,
-    borrowSliceLoading,
-    borrowSliceMessage,
-  ]);
+  }, [dispatch, message, error, borrowSliceError, borrowSliceMessage]);
 
   const [searchedKeyword, setSearchedKeyword] = useState("");
   const handleSearch = (e) => {
     setSearchedKeyword(e.target.value.toLowerCase());
   };
-  const searchedBooks = books.filter((book) => {
-    book.title.toLowerCase().includes(searchedKeyword);
-  });
+  const searchedBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchedKeyword),
+  );
   return (
     <>
       <main className="relative flex-1 p-6 pt-28">
@@ -121,12 +116,46 @@ const BookManagement = () => {
                   )}
                 </tr>
               </thead>
+
+              <tbody>
+                {searchedBooks.map((book, idx) => (
+                  <tr
+                    key={book._id}
+                    className={idx % 2 == 0 ? "bg-gray-500" : ""}
+                  >
+                    <td className="px-4 py-2">{idx + 1}</td>
+                    <td className="px-4 py-2">{book.title}</td>
+                    <td className="px-4 py-2">{book.author}</td>
+                    {isAuthenticated && user?.role == "Admin" && (
+                      <td className="px-4 py-2">{book.quantity}</td>
+                    )}
+                    <td className="px-4 py-2">{book.price}</td>
+                    <td className="px-4 py-2">
+                      {book.availability ? "Available" : "Not Available"}
+                    </td>
+                    {isAuthenticated && user?.role == "Admin" && (
+                      <td className="px-4 py-2 flex space-x-2 my-3 justify-center">
+                        <BookA onClick={() => openReadPopup(book._id)} />
+                        <NotebookPen
+                          onClick={() => openRecordBookPopup(book._id)}
+                        />
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
             </table>
           </div>
         ) : (
-          <div></div>
+          <h3 className="text-3xl mt-5 font-medium">
+            No books found in Library
+          </h3>
         )}
       </main>
+
+      {addBookPopup && <AddBookPopup />}
+      {readBookPopup && <ReadBookPopup book={readBook} />}
+      {recordBookPopup && <RecordBookPopup bookId={borrowBookId} />}
     </>
   );
 };

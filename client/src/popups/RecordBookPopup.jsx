@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
-const RecordBookPopup = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+const RecordBookPopup = ({ bookId }) => {
+  return <div></div>;
+};
 
-export default RecordBookPopup
+export default RecordBookPopup;

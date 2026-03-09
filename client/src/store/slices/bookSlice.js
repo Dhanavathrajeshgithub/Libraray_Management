@@ -18,7 +18,6 @@ const bookSlice = createSlice({
     fetchBooksSuccess(state, action) {
       state.loading = false;
       state.books = action.payload.data;
-      state.message = action.payload.message;
       state.error = null;
     },
     fetchBooksFailed(state, action) {

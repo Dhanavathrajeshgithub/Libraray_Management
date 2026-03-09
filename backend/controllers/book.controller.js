@@ -36,7 +36,7 @@ export const deleteBook = asyncHandler(async (req, res) => {
 
 export const getAllBooks = asyncHandler(async (req, res) => {
   const books = await Book.find({});
-  if (books.length == 0) {
+  if (!books) {
     throw new ApiError(500, "Failed to get all books");
   }
   res

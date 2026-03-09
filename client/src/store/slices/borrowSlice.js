@@ -20,7 +20,6 @@ const borrowSlice = createSlice({
     fetchUserBorrowedBooksSuccess(state, action) {
       state.loading = false;
       state.userBorrowedBooks = action.payload.data;
-      state.message = action.payload.message;
     },
     fetchUserBorrowedBooksFailed(state, action) {
       state.loading = false;
@@ -49,7 +48,6 @@ const borrowSlice = createSlice({
     fetchAllBorrowedBooksSuccess(state, action) {
       state.loading = false;
       state.allBorrowedBooks = action.payload.data;
-      state.message = action.payload.message;
     },
     fetchAllBorrowedBooksFailed(state, action) {
       state.loading = false;
