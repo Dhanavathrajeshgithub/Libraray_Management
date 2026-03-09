@@ -27,16 +27,16 @@ const borrowSlice = createSlice({
       state.error = action.payload;
     },
 
-    recordBookRequest(state) {
+    borrowBookRequest(state) {
       state.loading = true;
       state.error = null;
       state.message = null;
     },
-    recordBookSuccess(state, action) {
+    borrowBookSuccess(state, action) {
       state.loading = false;
-      state.userBorrowedBooks = action.payload;
+      state.message = action.payload;
     },
-    recordBookFailed(state, action) {
+    borrowBookFailed(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
@@ -70,7 +70,7 @@ const borrowSlice = createSlice({
       state.error = action.payload;
     },
 
-    resetBookSlice(state) {
+    resetBorrowSlice(state) {
       state.loading = false;
       state.error = null;
       state.message = null;
@@ -111,3 +111,63 @@ export const fetchAllBorrowedBooks = () => async (dispatch) => {
     );
   }
 };
+
+export const borrowBook = (bookId, userId) => async (dispatch) => {
+  dispatch(borrowSlice.actions.borrowBookRequest());
+  axios
+    .post(
+      `http://localhost:8000/api/v1/borrow/${bookId}/${userId}`,
+      {},
+      {
+        withCredentials: true,
+      },
+    )
+    .then((res) => {
+      dispatch(
+        borrowSlice.actions.borrowBookSuccess(
+          res?.data?.message || "Internal Error",
+        ),
+      );
+      dispatch(fetchAllBorrowedBooks());
+    })
+    .catch((err) => {
+      dispatch(
+        borrowSlice.actions.borrowBookFailed(
+          err?.response?.data?.message || "Internal Error",
+        ),
+      );
+    });
+};
+
+export const returnBook = (bookId, userId) => async (dispatch) => {
+  dispatch(borrowSlice.actions.returnBookRequest());
+  axios
+    .post(
+      `http://localhost:8000/api/v1/borrow/return/${bookId}/${userId}`,
+      {},
+      {
+        withCredentials: true,
+      },
+    )
+    .then((res) => {
+      dispatch(
+        borrowSlice.actions.returnBookSuccess(
+          res?.data?.message || "Internal Error",
+        ),
+      );
+      dispatch(fetchAllBorrowedBooks());
+    })
+    .catch((err) => {
+      dispatch(
+        borrowSlice.actions.returnBookFailed(
+          err?.response?.data?.message || "Internal Error",
+        ),
+      );
+    });
+};
+
+export const resetBorrowSlice = () => (dispatch) => {
+  dispatch(borrowSlice.actions.resetBorrowSlice());
+};
+
+export default borrowSlice.reducer;
