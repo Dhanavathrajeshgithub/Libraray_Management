@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toggleRecordBookPopup } from "./popUpSlice";
 
 const borrowSlice = createSlice({
   name: "borrow",
@@ -14,8 +15,6 @@ const borrowSlice = createSlice({
   reducers: {
     fetchUserBorrowedBooksRequest(state) {
       state.loading = true;
-      state.error = null;
-      state.message = null;
     },
     fetchUserBorrowedBooksSuccess(state, action) {
       state.loading = false;
@@ -28,8 +27,6 @@ const borrowSlice = createSlice({
 
     borrowBookRequest(state) {
       state.loading = true;
-      state.error = null;
-      state.message = null;
     },
     borrowBookSuccess(state, action) {
       state.loading = false;
@@ -42,8 +39,6 @@ const borrowSlice = createSlice({
 
     fetchAllBorrowedBooksRequest(state) {
       state.loading = true;
-      state.error = null;
-      state.message = null;
     },
     fetchAllBorrowedBooksSuccess(state, action) {
       state.loading = false;
@@ -56,8 +51,6 @@ const borrowSlice = createSlice({
 
     returnBookRequest(state) {
       state.loading = true;
-      state.error = null;
-      state.message = null;
     },
     returnBookSuccess(state, action) {
       state.loading = false;
@@ -110,38 +103,44 @@ export const fetchAllBorrowedBooks = () => async (dispatch) => {
   }
 };
 
-export const borrowBook = (bookId, userId) => async (dispatch) => {
-  dispatch(borrowSlice.actions.borrowBookRequest());
-  axios
-    .post(
-      `http://localhost:8000/api/v1/borrow/${bookId}/${userId}`,
-      {},
-      {
-        withCredentials: true,
-      },
-    )
-    .then((res) => {
-      dispatch(
-        borrowSlice.actions.borrowBookSuccess(
-          res?.data?.message || "Internal Error",
-        ),
-      );
-      dispatch(fetchAllBorrowedBooks());
-    })
-    .catch((err) => {
-      dispatch(
-        borrowSlice.actions.borrowBookFailed(
-          err?.response?.data?.message || "Internal Error",
-        ),
-      );
-    });
-};
+export const borrowBook =
+  ({ bookId, email }) =>
+  async (dispatch) => {
+    dispatch(borrowSlice.actions.borrowBookRequest());
+    // console.log("Hello");
+    axios
+      .post(
+        `http://localhost:8000/api/v1/borrow/${bookId}/${email}`,
+        {},
+        {
+          withCredentials: true,
+        },
+      )
+      .then((res) => {
+        //console.log(res);
+        dispatch(
+          borrowSlice.actions.borrowBookSuccess(
+            res?.data?.message || "Internal Error",
+          ),
+        );
+        dispatch(fetchAllBorrowedBooks());
+        dispatch(toggleRecordBookPopup());
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(
+          borrowSlice.actions.borrowBookFailed(
+            err?.response?.data?.message || "Internal Error",
+          ),
+        );
+      });
+  };
 
-export const returnBook = (bookId, userId) => async (dispatch) => {
+export const returnBook = (bookId, email) => async (dispatch) => {
   dispatch(borrowSlice.actions.returnBookRequest());
   axios
     .post(
-      `http://localhost:8000/api/v1/borrow/return/${bookId}/${userId}`,
+      `http://localhost:8000/api/v1/borrow/return/${bookId}/${email}`,
       {},
       {
         withCredentials: true,

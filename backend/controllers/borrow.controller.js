@@ -7,11 +7,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { calculateFine } from "../utils/calculateFine.js";
 
 export const borrowBookByUser = asyncHandler(async (req, res) => {
-  const { bookId, userId } = req.params;
-  if (!bookId || !userId) {
-    throw new ApiError(400, "Both UserId and bookId are required");
+  const { bookId, email } = req.params;
+  if (!bookId || !email || email == "" || bookId == "") {
+    throw new ApiError(400, "Both Email and bookId are required");
   }
-  const user = await User.findOne({ _id: userId, accountVerified: true });
+  const user = await User.findOne({ email, accountVerified: true });
   if (!user) {
     throw new ApiError(404, "User not found");
   }
@@ -29,7 +29,7 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
 
   await user.save({ validateModifiedOnly: true });
   const borrowedObj = await Borrow.create({
-    userId,
+    email,
     price: book.price,
     bookId,
     borrowDate: Date.now(),
@@ -51,11 +51,11 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
 });
 
 export const returnBookByUser = asyncHandler(async (req, res) => {
-  const { bookId, userId } = req.params;
-  const user = await User.findOne({ _id: userId, accountVerified: true });
+  const { bookId, email } = req.params;
+  const user = await User.findOne({ email, accountVerified: true });
   const book = await Book.findById(bookId);
   const borrowObj = await Borrow.findOne({
-    userId,
+    email,
     bookId,
     returnDate: null,
   });

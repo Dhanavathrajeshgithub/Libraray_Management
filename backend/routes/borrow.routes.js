@@ -9,23 +9,23 @@ import { isAuthorized, verifyJWT } from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
 router.post(
-  "/:bookId/:userId",
+  "/:bookId/:email",
   verifyJWT,
   isAuthorized("Admin"),
-  borrowBookByUser
+  borrowBookByUser,
 );
 router.get("/user/borrowed", verifyJWT, getBorrowedBooksByUser);
 router.get(
   "/users/borrowed",
   verifyJWT,
   isAuthorized("Admin"),
-  getAllBorrowedBooksByUsers
+  getAllBorrowedBooksByUsers,
 );
 router.post(
-  "/return/:bookId/:userId",
+  "/return/:bookId/:email",
   verifyJWT,
   isAuthorized("Admin"),
-  returnBookByUser
+  returnBookByUser,
 );
 
 export default router;

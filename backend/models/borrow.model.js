@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 
 const borrowSchema = new mongoose.Schema(
   {
-    userId: {
+    email: {
       type: String,
-      ref: "User",
       required: true,
     },
     price: {
@@ -37,7 +36,7 @@ const borrowSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const Borrow = mongoose.model("Borrow", borrowSchema);
