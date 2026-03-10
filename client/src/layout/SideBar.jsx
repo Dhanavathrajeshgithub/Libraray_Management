@@ -68,7 +68,7 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             <img src={bookIcon} alt="Icon" /> <span>Books</span>
           </button>
 
-          {
+          {isAuthenticated && user?.role === "Admin" && (
             <>
               <button
                 className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
@@ -92,13 +92,13 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
                 <RiAdminFill className="w-6 h-6" /> <span>Add New Admin</span>
               </button>
             </>
-          }
+          )}
 
           {isAuthenticated && user?.role === "User" && (
             <>
               <button
                 className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
-                onClick={() => dispatch(toggleSettingPopup())}
+                onClick={() => setSelectedComponent("My Borrowed Books")}
               >
                 <img src={catalogIcon} alt="Icon" />
                 <span>My Borrowed Books</span>
@@ -106,7 +106,10 @@ const SideBar = ({ isSideBarOpen, setIsSideBarOpen, setSelectedComponent }) => {
             </>
           )}
 
-          <button className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2">
+          <button
+            className="w-full py-2 font-medium bg-transparent rounded-md hover:cursor flex items-center space-x-2"
+            onClick={() => dispatch(toggleSettingPopup())}
+          >
             <img src={settingIcon} alt="Icon" /> <span>Update Credentials</span>
           </button>
         </nav>
