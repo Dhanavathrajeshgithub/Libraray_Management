@@ -107,7 +107,6 @@ export const borrowBook =
   ({ bookId, email }) =>
   async (dispatch) => {
     dispatch(borrowSlice.actions.borrowBookRequest());
-    // console.log("Hello");
     axios
       .post(
         `http://localhost:8000/api/v1/borrow/${bookId}/${email}`,
@@ -117,7 +116,6 @@ export const borrowBook =
         },
       )
       .then((res) => {
-        //console.log(res);
         dispatch(
           borrowSlice.actions.borrowBookSuccess(
             res?.data?.message || "Internal Error",

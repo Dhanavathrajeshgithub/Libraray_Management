@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toggleAddBookPopup } from "./popUpSlice";
 
 const bookSlice = createSlice({
   name: "book",
@@ -81,6 +82,8 @@ export const addBook = (data) => async (dispatch) => {
     );
 
     dispatch(bookSlice.actions.addBookSuccess(res.data));
+    dispatch(fetchAllBooks());
+    dispatch(toggleAddBookPopup());
   } catch (err) {
     dispatch(
       bookSlice.actions.addBookFailed(
