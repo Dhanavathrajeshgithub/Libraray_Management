@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const borrowSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Make sure this matches your actual User model name
+      required: true,
+    },
     email: {
       type: String,
       required: true,

@@ -29,6 +29,7 @@ export const borrowBookByUser = asyncHandler(async (req, res) => {
 
   await user.save({ validateModifiedOnly: true });
   const borrowedObj = await Borrow.create({
+    user,
     email,
     price: book.price,
     bookId,
@@ -143,7 +144,11 @@ export const getBorrowedBooksByUser = asyncHandler(async (req, res) => {
     );
 });
 export const getAllBorrowedBooksByUsers = asyncHandler(async (req, res) => {
-  const borrowedBooks = await Borrow.find({});
+  const borrowedBooks = await Borrow.find({}).populate(
+    "user",
+    "username email fullName",
+  );
+
   if (!borrowedBooks) {
     throw new ApiError(500, "Failed to get all borrowed books");
   }
