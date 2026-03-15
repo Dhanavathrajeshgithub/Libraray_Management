@@ -140,7 +140,9 @@ const Catalog = () => {
         )}
       </main>
 
-      {returnBookPopup && <ReturnBookPopup />}
+      {returnBookPopup && (
+        <ReturnBookPopup bookId={borrowedBookId} email={email} />
+      )}
     </>
   );
 };
