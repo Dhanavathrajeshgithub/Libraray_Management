@@ -10,7 +10,8 @@ import crypto from "crypto";
 
 const cookieOptions = {
   httpOnly: true,
-  secure: true,
+  secure: true, // Required for sameSite: "none"
+  sameSite: "none", // Allows the cookie to be sent across different domains
 };
 export const registerUser = asyncHandler(async (req, res) => {
   if (!req.body) {
