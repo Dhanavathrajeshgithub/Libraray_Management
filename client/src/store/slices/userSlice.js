@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api.js";
 import { toast } from "react-toastify";
 import { toggleAddNewAdminPopup } from "./popUpSlice";
 const userSlice = createSlice({
@@ -34,8 +34,9 @@ const userSlice = createSlice({
 
 export const fetchAllUsers = () => async (dispatch) => {
   dispatch(userSlice.actions.fetchAllUsersRequest());
-  await axios
-    .get("http://localhost:8000/api/v1/user/all", { withCredentials: true })
+  await API.get("/user/all", {
+    withCredentials: true,
+  })
     .then((res) => {
       dispatch(userSlice.actions.fetchAllUsersSuccess(res.data.data));
     })
@@ -50,13 +51,12 @@ export const fetchAllUsers = () => async (dispatch) => {
 
 export const addNewAdmin = (data) => async (dispatch) => {
   dispatch(userSlice.actions.addNewAdminRequest());
-  await axios
-    .post("http://localhost:8000/api/v1/user/register-admin", data, {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
+  await API.post("/user/register-admin", data, {
+    withCredentials: true,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  })
     .then((res) => {
       dispatch(userSlice.actions.addNewAdminSuccess());
       toast.success(res.data.message);

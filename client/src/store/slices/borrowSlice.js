@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import API from "../api.js";
 import { toggleRecordBookPopup } from "./popUpSlice";
 
 const borrowSlice = createSlice({
@@ -72,10 +72,9 @@ const borrowSlice = createSlice({
 export const fetchUserBorrowedBooks = () => async (dispatch) => {
   dispatch(borrowSlice.actions.fetchUserBorrowedBooksRequest());
   try {
-    const res = await axios.get(
-      "http://localhost:8000/api/v1/borrow/user/borrowed",
-      { withCredentials: true },
-    );
+    const res = await API.get("/borrow/user/borrowed", {
+      withCredentials: true,
+    });
     dispatch(borrowSlice.actions.fetchUserBorrowedBooksSuccess(res.data));
   } catch (err) {
     dispatch(
@@ -89,10 +88,9 @@ export const fetchUserBorrowedBooks = () => async (dispatch) => {
 export const fetchAllBorrowedBooks = () => async (dispatch) => {
   dispatch(borrowSlice.actions.fetchAllBorrowedBooksRequest());
   try {
-    const res = await axios.get(
-      "http://localhost:8000/api/v1/borrow/users/borrowed",
-      { withCredentials: true },
-    );
+    const res = await API.get("/borrow/users/borrowed", {
+      withCredentials: true,
+    });
     dispatch(borrowSlice.actions.fetchAllBorrowedBooksSuccess(res.data));
   } catch (err) {
     dispatch(
@@ -107,14 +105,13 @@ export const borrowBook =
   ({ bookId, email }) =>
   async (dispatch) => {
     dispatch(borrowSlice.actions.borrowBookRequest());
-    axios
-      .post(
-        `http://localhost:8000/api/v1/borrow/${bookId}/${email}`,
-        {},
-        {
-          withCredentials: true,
-        },
-      )
+    API.post(
+      `/borrow/${bookId}/${email}`,
+      {},
+      {
+        withCredentials: true,
+      },
+    )
       .then((res) => {
         dispatch(
           borrowSlice.actions.borrowBookSuccess(
@@ -136,14 +133,13 @@ export const borrowBook =
 
 export const returnBook = (bookId, email) => async (dispatch) => {
   dispatch(borrowSlice.actions.returnBookRequest());
-  axios
-    .post(
-      `http://localhost:8000/api/v1/borrow/return/${bookId}/${email}`,
-      {},
-      {
-        withCredentials: true,
-      },
-    )
+  API.post(
+    `/borrow/return/${bookId}/${email}`,
+    {},
+    {
+      withCredentials: true,
+    },
+  )
     .then((res) => {
       dispatch(
         borrowSlice.actions.returnBookSuccess(
