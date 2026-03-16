@@ -106,7 +106,11 @@ const UserDashboard = () => {
 
             {/* Quote Section */}
             <div className="bg-white p-10 rounded-2xl shadow-sm min-h-[250px] flex justify-center items-center relative">
-              <p className="text-4xl text-gray-300">""</p>
+              <p className="text-4xl text-gray-300">
+                "Embarking on the journey of reading fosters personal growth,
+                nurturing a path towards excellence and the refinedment of
+                character."
+              </p>
               <p className="text-gray-500 text-sm absolute bottom-5 right-10">
                 ~ BookWorm Team
               </p>
