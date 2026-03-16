@@ -40,7 +40,7 @@ const AdminDashboard = () => {
 
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalAdmin, setTotalAdmin] = useState(0);
-  const [totalBooks, setTotalBooks] = useState((books && books.length) || 0);
+  const [totalBooks, setTotalBooks] = useState(0);
   const [totalBorrowedBooks, setTotalBorrowedBooks] = useState(0);
   const [totalReturnedBooks, setTotalReturnedBooks] = useState(0);
 
@@ -49,7 +49,9 @@ const AdminDashboard = () => {
     let numberOfAdmin = users.filter((user) => user.role == "Admin");
     setTotalAdmin(numberOfAdmin.length);
     setTotalUsers(numberOfUsers.length);
-
+    if (books) {
+      setTotalBooks(books.length);
+    }
     let noOfTotalBorrowedBooks = allBorrowedBooks.filter(
       (book) => book.returnDate == null,
     );
@@ -58,7 +60,7 @@ const AdminDashboard = () => {
     );
     setTotalBorrowedBooks(noOfTotalBorrowedBooks.length);
     setTotalReturnedBooks(noOfTotalReturnedBooks.length);
-  }, [users, allBorrowedBooks]);
+  }, [users, allBorrowedBooks, books]);
 
   const data = {
     labels: ["Total Borrowed Books", "Total Returned Books"],
