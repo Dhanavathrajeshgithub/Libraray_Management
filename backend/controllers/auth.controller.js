@@ -66,6 +66,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   const emailResult = await sendVerificationCode(verificationCode, email); // Await and no res
   if (!emailResult.success) {
+    await User.findByIdAndDelete(user._id);
     throw new ApiError(500, emailResult.message); // Let asyncHandler send error response
   }
 
