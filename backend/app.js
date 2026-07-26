@@ -7,7 +7,7 @@ import errorMiddleware from "./middlewares/error.middleware.js";
 import { notifyUser } from "./services/notifyUser.js";
 import { removeUnverifiedUser } from "./services/removeUnverifiedUsers.js";
 export const app = express();
-
+app.set("trust proxy", 1);
 dotenv.config({ path: "./config/config.env" });
 
 app.use(
