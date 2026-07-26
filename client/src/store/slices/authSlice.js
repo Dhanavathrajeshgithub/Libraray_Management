@@ -159,13 +159,15 @@ export const updatePassword = (data) => async (dispatch) => {
     withCredentials: true,
   })
     .then((res) => {
-      dispatch(authSlice.actions.updatePasswordSuccess(res.data.message));
+      dispatch(authSlice.actions.updatePasswordSuccess(res?.data?.message));
       dispatch(toggleSettingPopup());
     })
     .catch((error) => {
-      dispatch(
-        authSlice.actions.updatePasswordFailed(error.response.data.message),
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+      dispatch(authSlice.actions.updatePasswordFailed(errorMessage));
     });
 };
 
@@ -182,11 +184,11 @@ export const resetPassword = (data, token) => async (dispatch) => {
     );
     dispatch(authSlice.actions.resetPasswordSuccess(res.data));
   } catch (error) {
-    dispatch(
-      authSlice.actions.resetPasswordFailed(
-        error?.response?.data?.message || "Something went wrong",
-      ),
-    );
+    const errorMessage =
+      error?.response?.data?.message ||
+      error.message ||
+      "Network Error: Unable to connect to the server.";
+    dispatch(authSlice.actions.resetPasswordFailed(errorMessage));
   }
 };
 
@@ -206,9 +208,11 @@ export const forgotPassword = (email) => async (dispatch) => {
       dispatch(authSlice.actions.forgotPasswordSuccess(res.data));
     })
     .catch((error) => {
-      dispatch(
-        authSlice.actions.forgotPasswordFailed(error.response.data.message),
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+      dispatch(authSlice.actions.forgotPasswordFailed(errorMessage));
     });
 };
 
@@ -221,7 +225,11 @@ export const getUser = () => async (dispatch) => {
       dispatch(authSlice.actions.getUserSuccess(res.data));
     })
     .catch((error) => {
-      dispatch(authSlice.actions.getUserFailed(error.response.data.message));
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+      dispatch(authSlice.actions.getUserFailed(errorMessage));
     });
 };
 
@@ -233,11 +241,15 @@ export const logout = () => async (dispatch) => {
   dispatch(authSlice.actions.logoutRequest());
   API.post("/auth/logout", {}, { withCredentials: true })
     .then((res) => {
-      dispatch(authSlice.actions.logoutSuccess(res.data.message));
+      dispatch(authSlice.actions.logoutSuccess(res?.data?.message));
       dispatch(authSlice.actions.resetAuthSlice());
     })
     .catch((error) => {
-      dispatch(authSlice.actions.logoutFailed(error.response.data.message));
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+      dispatch(authSlice.actions.logoutFailed(errorMessage));
     });
 };
 export const login = (data) => async (dispatch) => {
@@ -246,10 +258,15 @@ export const login = (data) => async (dispatch) => {
     withCredentials: true,
   })
     .then((res) => {
-      dispatch(authSlice.actions.loginSuccess(res.data));
+      dispatch(authSlice.actions.loginSuccess(res?.data));
     })
     .catch((error) => {
-      dispatch(authSlice.actions.loginFailed(error.response.data.message));
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+
+      dispatch(authSlice.actions.loginFailed(errorMessage));
     });
 };
 
@@ -266,12 +283,14 @@ export const otpVerification = (email, otp) => async (dispatch) => {
     },
   )
     .then((res) => {
-      dispatch(authSlice.actions.otpVerificationSuccess(res.data));
+      dispatch(authSlice.actions.otpVerificationSuccess(res?.data));
     })
     .catch((error) => {
-      dispatch(
-        authSlice.actions.otpVerificationFailed(error.response.data.message),
-      );
+      const errorMessage =
+        error?.response?.data?.message ||
+        error.message ||
+        "Network Error: Unable to connect to the server.";
+      dispatch(authSlice.actions.otpVerificationFailed(errorMessage));
     });
 };
 
@@ -281,13 +300,13 @@ export const register = (data) => async (dispatch) => {
     const res = await API.post("/auth/register", data, {
       withCredentials: true,
     });
-    dispatch(authSlice.actions.registerSuccess(res.data));
+    dispatch(authSlice.actions.registerSuccess(res?.data));
   } catch (error) {
-    dispatch(
-      authSlice.actions.registerFailed(
-        error?.response?.data?.message || "Something went wrong",
-      ),
-    );
+    const errorMessage =
+      error?.response?.data?.message ||
+      error.message ||
+      "Network Error: Unable to connect to the server.";
+    dispatch(authSlice.actions.registerFailed(errorMessage));
   }
 };
 
