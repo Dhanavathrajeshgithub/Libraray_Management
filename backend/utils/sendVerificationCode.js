@@ -11,7 +11,7 @@ export async function sendVerificationCode(verificationCode, email) {
     return { success: true, message: "Verification code sent successfully" };
   } catch (error) {
     // LOG THE ERROR TO YOUR BACKEND CONSOLE
-    console.error("NODEMAILER ERROR: ", error);
+    console.error("EMAIL SEND ERROR: ", error);
     return { success: false, message: "Verification code failed to send." };
   }
 }
