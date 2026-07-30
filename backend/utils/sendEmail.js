@@ -1,16 +1,26 @@
-import { Resend } from "resend";
+import * as brevo from "@getbrevo/brevo";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const apiInstance = new brevo.TransactionalEmailsApi();
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY,
+);
 
 export const sendEmail = async ({ email, subject, message }) => {
-  const { error } = await resend.emails.send({
-    from: process.env.RESEND_FROM, // e.g. "Bookworm <onboarding@yourdomain.com>"
-    to: email,
-    subject,
-    html: message,
-  });
+  const sendSmtpEmail = new brevo.SendSmtpEmail();
 
-  if (error) {
-    throw new Error(error.message || "Failed to send email");
+  sendSmtpEmail.sender = {
+    name: "Bookworm Library",
+    email: process.env.BREVO_SENDER_EMAIL,
+  };
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = message;
+
+  try {
+    await apiInstance.sendTransacEmail(sendSmtpEmail);
+  } catch (error) {
+    const errMsg = error?.response?.body?.message || error.message;
+    throw new Error(errMsg || "Failed to send email");
   }
 };
