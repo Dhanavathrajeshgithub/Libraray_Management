@@ -20,7 +20,13 @@ export const sendEmail = async ({ email, subject, message }) => {
   sendSmtpEmail.to = [{ email }];
   sendSmtpEmail.subject = subject;
   sendSmtpEmail.htmlContent = message;
-
+  console.log("--- DEBUG INFO ---");
+  console.log(
+    "Key Length:",
+    process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.length : "UNDEFINED",
+  );
+  console.log("Sender:", process.env.BREVO_SENDER_EMAIL);
+  console.log("------------------");
   try {
     await apiInstance.sendTransacEmail(sendSmtpEmail);
   } catch (error) {
